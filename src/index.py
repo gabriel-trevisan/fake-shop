@@ -7,6 +7,7 @@ from models.base import db
 from flask_migrate import Migrate, upgrade
 import random
 from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
+import socket  # Módulo para obter informações do servidor
 
 app = Flask(__name__,
             static_url_path='',
@@ -251,8 +252,12 @@ def remove_item(item_id):
 
 @app.route('/')
 def index():
+    # Obter informações do servidor
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+
     products = Product.query.all()
-    return render_template('index.html', products=products)
+    return render_template('index.html', products=products, hostname=hostname, ip_address=ip_address)
 
 if __name__ == '__main__':
     #apply_migrations()
